@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* index.css */
+body {
+    @apply font-sans;
+  }
+  
+  h1 {
+    @apply xsm:text-base  sm:text-xl md:text-2xl lg:text-3xl;
+}
+
+p {
+    @apply text-sm sm:text-base md:text-lg lg:text-xl;
+}  
