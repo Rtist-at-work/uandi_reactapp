@@ -19,6 +19,10 @@ RUN npm run build
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
 
+WORKDIR /usr/share/nginx/html
+
+RUN rm -rf *
+
 # Copy the build output from the builder stage to Nginx's default static directory
 COPY --from=builder /app/dist /usr/share/nginx/html
 
