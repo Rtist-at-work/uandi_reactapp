@@ -29,7 +29,6 @@ const Cart = () => {
       }
       subtotal += price * cartProduct.count;
     });
-    console.log(discount)
     console.log(subtotal)
     console.log(subtotal-discount)
     setDiscount(discount);
