@@ -26,7 +26,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Image from Docker Hub
-        run: docker pull karthik160/uandi-frontend:latest        
+        run: docker pull karthik160/uandi-frontend:latest   
+      - name: delete old container from Docker Hub
+        run: docker  rm -f uandi-frontend-container
+             
 
       - name: Run Container from Docker Image
         run: docker run -d -p 3000:80 --name uandi-frontend-container karthik160/uandi-frontend
