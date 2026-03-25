@@ -3,6 +3,7 @@ import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Breadcrumb from "../components/BreadCrumb";
+import RazorpayPayment from "../Checkout_page/RazorpayPayment";
 
 const CheckoutPage = () => {
   const { postJsonApi, patchApi, getJsonApi } = useApi();
@@ -73,13 +74,13 @@ const CheckoutPage = () => {
         response = await patchApi(
           `api/updateaddress/${editingAddressId}`,
           newAddress,
-          "application/json"
+          "application/json",
         );
       } else {
         response = await postJsonApi(
           "api/postaddress",
           newAddress,
-          "application/json"
+          "application/json",
         );
       }
 
@@ -107,15 +108,34 @@ const CheckoutPage = () => {
   // ================================
   // PLACE ORDER
   // ================================
+  const [showRazorpay, setShowRazorpay] = useState(false);
+
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
       toast.error("Please select a delivery address");
       return;
     }
 
+    if (paymentMethod === "COD") {
+      // NORMAL ORDER
+      await placeOrderAfterPayment(null);
+    } else {
+    // TRIGGER RAZORPAY
+    console.log("cll");
+    setShowRazorpay(true);
+    }
+  };
+  console.log("set :", showRazorpay);
+  // Scroll to top on load
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  const placeOrderAfterPayment = async (paymentData) => {
     const payload = {
       address: selectedAddress,
       paymentMethod,
+      paymentData, // razorpay response
       ...cartSummary,
     };
 
@@ -133,12 +153,7 @@ const CheckoutPage = () => {
       setOrderLoading(false);
     }
   };
-
-  // Scroll to top on load
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }, []);
-
+console.log('show :', showRazorpay)
   return (
     <>
       {" "}
@@ -181,8 +196,8 @@ const CheckoutPage = () => {
                           addr.type === "home"
                             ? "bg-green-100 text-green-800"
                             : addr.type === "work"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {addr.type.toUpperCase()}
@@ -203,6 +218,18 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               ))
+            )}
+
+            {showRazorpay && (
+              <RazorpayPayment
+                postJsonApi={postJsonApi}
+                amount={cartSummary.finalAmount * 100} // paise
+                user={selectedAddress}
+                onSuccess={(paymentResponse) => {
+                  setShowRazorpay(false);
+                  placeOrderAfterPayment(paymentResponse);
+                }}
+              />
             )}
 
             {!showAddressForm && (
@@ -240,7 +267,7 @@ const CheckoutPage = () => {
                           }
                         />
                       </div>
-                    )
+                    ),
                   )}
 
                   {/* Address Line */}
