@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 const RazorpayPayment = ({ amount, onSuccess, user, postJsonApi }) => {
   useEffect(() => {
-    console.log('wk')
+    console.log("wk");
     loadRazorpay();
   }, []);
 
@@ -15,12 +15,11 @@ const RazorpayPayment = ({ amount, onSuccess, user, postJsonApi }) => {
   };
 
   const createOrder = async () => {
-
-    console.log('called rzp')
+    console.log("called rzp");
     try {
       // CALL BACKEND → CREATE RAZORPAY ORDER
       const res = await postJsonApi("api/create-razorpay-order", {
-      amount : amount
+        amount: amount,
       });
 
       console.log(res);
@@ -32,6 +31,13 @@ const RazorpayPayment = ({ amount, onSuccess, user, postJsonApi }) => {
         name: "uandiau",
         description: "Order Payment",
         order_id: res.data.id,
+
+        method: {
+          upi: true,
+          card: true,
+          netbanking: true,
+          wallet: true,
+        },
 
         handler: function (response) {
           // SUCCESS CALLBACK
