@@ -49,7 +49,7 @@ const CartPage = () => {
       }
     } catch (err) {
       console.log("Get Cart Error:", err);
-      toast.error("Failed to load cart. Please try again.");
+      // toast.error("Failed to load cart. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -65,13 +65,13 @@ const CartPage = () => {
   const updateQty = async (id, newQty, size) => {
     try {
       setCartItems((prev) =>
-        prev.map((item) => (item._id === id ? { ...item, qty: newQty } : item))
+        prev.map((item) => (item._id === id ? { ...item, qty: newQty } : item)),
       );
 
       await patchApi(
         "api/updateCart",
         { productId: id, size, quantity: newQty },
-        "application/json"
+        "application/json",
       );
 
       toast.success("Cart updated successfully!");
@@ -87,12 +87,16 @@ const CartPage = () => {
   // -------------------------
   const removeItem = async (id, size) => {
     try {
-      setCartItems((prev) => prev.filter((item) => item._id !== id));
+      console.log("id , size :", id, size);
+      console.log("cartItems :", cartItems);
+      setCartItems((prev) =>
+        prev.filter((item) => !(item._id === id && item.size === size)),
+      );
 
       await patchApi(
         "api/updateCart",
         { productId: id, size, quantity: 0 },
-        "application/json"
+        "application/json",
       );
 
       toast.success("Item removed from cart!");

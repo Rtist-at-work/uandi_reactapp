@@ -5,6 +5,8 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { toast } from "sonner";
 import Breadcrumb from "../components/BreadCrumb";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const MyOrdersPage = () => {
   const url = import.meta.env.VITE_API_URL;
@@ -116,7 +118,6 @@ const MyOrdersPage = () => {
   // ------------------------------------------
   return (
     <>
-      {" "}
       <Breadcrumb />
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -168,7 +169,7 @@ const MyOrdersPage = () => {
                     className="flex flex-col sm:flex-row gap-4 px-6 py-4"
                   >
                     {/* Product Image */}
-                    <img
+                    <LazyLoadImage
                       src={`${url}/api/mediaDownload/${item.image}`}
                       alt={item.name}
                       className="w-24 h-24 rounded-xl object-cover border"

@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { Star, Heart } from "lucide-react";
 import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const ProductCard = ({ product }) => {
   const url = import.meta.env.VITE_API_URL;
@@ -75,7 +77,7 @@ const ProductCard = ({ product }) => {
 
       {/* Image */}
       <div className="w-full h-40 overflow-hidden rounded-xl">
-        <img
+        <LazyLoadImage
           src={`${url}/api/mediaDownload/${product.productImages[0]}`}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

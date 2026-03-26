@@ -3,14 +3,6 @@ import { useNavigate } from "react-router-dom";
 export const FooterSection = () => {
   const navigate = useNavigate();
 
-  const categories = [
-    { label: "Men Innerwear", path: "/category/men-innerwear" },
-    { label: "Women Innerwear", path: "/category/women-innerwear" },
-    { label: "Kids Wear", path: "/category/kids-wear" },
-    { label: "Thermals", path: "/category/thermals" },
-    { label: "Sports Wear", path: "/category/sports-wear" },
-  ];
-
   const companyLinks = [
     { label: "About Us", path: "/about" },
     { label: "Contact", path: "/contact" },
@@ -21,6 +13,7 @@ export const FooterSection = () => {
   return (
     <footer className="w-full mt-16 bg-black text-white py-12 px-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
+        
         {/* Logo + Description */}
         <div>
           <h2
@@ -30,28 +23,27 @@ export const FooterSection = () => {
             U&I
           </h2>
           <p className="text-sm text-gray-300 leading-relaxed">
-            Premium innerwear crafted for comfort, style, and everyday
-            confidence.
+            Premium innerwear crafted for comfort, style, and everyday confidence.
+          </p>
+
+          {/* Tagline */}
+          <p className="mt-3 text-xs text-gray-400">
+            Designed for movement. Built for confidence.
           </p>
         </div>
 
-        {/* Categories */}
+        {/* Trust / Highlights */}
         <div>
-          <h3 className="font-semibold text-lg mb-3">Categories</h3>
+          <h3 className="font-semibold text-lg mb-3">Why Choose Us</h3>
           <ul className="space-y-2 text-sm text-gray-300">
-            {categories.map((item, i) => (
-              <li
-                key={i}
-                onClick={() => navigate(item.path)}
-                className="hover:text-white transition cursor-pointer"
-              >
-                {item.label}
-              </li>
-            ))}
+            <li>✔ Premium Quality Fabric</li>
+            <li>✔ Secure Payments</li>
+            <li>✔ Easy Returns</li>
+            <li>✔ Fast Delivery</li>
           </ul>
         </div>
 
-        {/* Company */}
+        {/* Company (kept minimal) */}
         <div>
           <h3 className="font-semibold text-lg mb-3">Company</h3>
           <ul className="space-y-2 text-sm text-gray-300">
@@ -65,6 +57,11 @@ export const FooterSection = () => {
               </li>
             ))}
           </ul>
+
+          {/* Contact */}
+          <div className="mt-4 text-sm text-gray-400">
+            <p>Email: support.uandik@gmail.com</p>
+          </div>
         </div>
       </div>
 

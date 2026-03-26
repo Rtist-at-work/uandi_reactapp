@@ -1,4 +1,5 @@
-import React from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import { Skeleton } from "@mui/material";
 
 const CartItem = ({ item, updateQty, removeItem, loading }) => {
@@ -24,7 +25,7 @@ const CartItem = ({ item, updateQty, removeItem, loading }) => {
 
   return (
     <div className="border rounded-xl p-4 flex gap-4 shadow-sm">
-      <img
+      <LazyLoadImage
         src={item.image}
         alt={item.name}
         className="w-28 h-28 object-cover rounded-xl"
@@ -38,9 +39,11 @@ const CartItem = ({ item, updateQty, removeItem, loading }) => {
             <p className="text-green-700 font-semibold text-xl">
               ₹{Math.round(item.price)}
             </p>
-            <p className="text-gray-500 line-through">
-              ₹{Math.round(item.originalPrice)}
-            </p>
+            {item.originalPrice > item.price && (
+              <p className="text-gray-500 line-through">
+                ₹{Math.round(item.originalPrice)}
+              </p>
+            )}
           </div>
 
           {item.size && (

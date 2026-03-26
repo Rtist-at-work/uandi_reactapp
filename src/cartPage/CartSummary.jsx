@@ -84,7 +84,7 @@ const CartSummary = ({
       </div>
     );
   }
-
+  console.log('ec :', eligibleCoupons)
   return (
     <div className="border rounded-xl p-5 shadow-md sticky top-20 h-fit bg-white">
       {/* COUPON SECTION */}

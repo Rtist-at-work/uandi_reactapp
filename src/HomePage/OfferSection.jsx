@@ -1,4 +1,6 @@
 import Skeleton from "@mui/material/Skeleton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function TwoOfferBoxes({ banners, bannerClick, loading }) {
   const url = import.meta.env.VITE_API_URL;
@@ -28,7 +30,7 @@ export default function TwoOfferBoxes({ banners, bannerClick, loading }) {
           key={offer._id}
           className="relative h-96 rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
         >
-          <img
+          <LazyLoadImage
             src={`${url}/api/mediaDownload/${offer.bannerImg}`}
             alt={offer.heading}
             className="w-full h-full object-cover group-hover:scale-110 transition duration-500"

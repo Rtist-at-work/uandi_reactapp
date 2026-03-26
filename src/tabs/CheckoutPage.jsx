@@ -3,7 +3,7 @@ import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Breadcrumb from "../components/BreadCrumb";
-import RazorpayPayment from "../Checkout_page/RazorpayPayment";
+import { openRazorpay } from "../Checkout_page/RazorpayPayment";
 
 const CheckoutPage = () => {
   const { postJsonApi, patchApi, getJsonApi } = useApi();
@@ -108,24 +108,32 @@ const CheckoutPage = () => {
   // ================================
   // PLACE ORDER
   // ================================
-  const [showRazorpay, setShowRazorpay] = useState(false);
 
-  const handlePlaceOrder = async () => {
-    if (!selectedAddress) {
-      toast.error("Please select a delivery address");
-      return;
-    }
+const handlePlaceOrder = async () => {
+  if (orderLoading) return; // ✅ prevent spam clicks
 
-    if (paymentMethod === "COD") {
-      // NORMAL ORDER
-      await placeOrderAfterPayment(null);
-    } else {
-    // TRIGGER RAZORPAY
-    console.log("cll");
-    setShowRazorpay(true);
-    }
-  };
-  console.log("set :", showRazorpay);
+  if (!selectedAddress) {
+    toast.error("Please select a delivery address");
+    return;
+  }
+
+  if (paymentMethod === "COD") {
+    await placeOrderAfterPayment(null);
+  } else {
+    setOrderLoading(true);
+
+    await openRazorpay({
+      amount: cartSummary.finalAmount * 100,
+      user: selectedAddress,
+      postJsonApi,
+      onSuccess: (paymentResponse) => {
+        placeOrderAfterPayment(paymentResponse);
+      },
+    });
+
+    setOrderLoading(false);
+  }
+};
   // Scroll to top on load
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -153,7 +161,6 @@ const CheckoutPage = () => {
       setOrderLoading(false);
     }
   };
-console.log('show :', showRazorpay)
   return (
     <>
       {" "}
@@ -220,17 +227,7 @@ console.log('show :', showRazorpay)
               ))
             )}
 
-            {showRazorpay && (
-              <RazorpayPayment
-                postJsonApi={postJsonApi}
-                amount={cartSummary.finalAmount * 100} // paise
-                user={selectedAddress}
-                onSuccess={(paymentResponse) => {
-                  setShowRazorpay(false);
-                  placeOrderAfterPayment(paymentResponse);
-                }}
-              />
-            )}
+           
 
             {!showAddressForm && (
               <button

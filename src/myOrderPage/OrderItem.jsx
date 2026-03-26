@@ -1,4 +1,5 @@
-import React from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import OrderStatusBadge from "./OrderStatusBadge";
 
 const OrderItem = ({ order }) => {
@@ -11,13 +12,11 @@ const OrderItem = ({ order }) => {
         <OrderStatusBadge status={order.status} />
       </div>
 
-      <p className="text-sm text-gray-500 mt-1">
-        Ordered on: {order.date}
-      </p>
+      <p className="text-sm text-gray-500 mt-1">Ordered on: {order.date}</p>
 
       <div className="mt-4 flex gap-4 items-center">
         {/* Thumbnail */}
-        <img
+        <LazyLoadImage
           src={order.image}
           alt="Product"
           className="w-20 h-20 object-cover rounded-lg border"
@@ -26,12 +25,8 @@ const OrderItem = ({ order }) => {
         {/* Product Summary */}
         <div>
           <p className="font-semibold text-gray-800">{order.productName}</p>
-          <p className="text-gray-600 text-sm">
-            Qty: {order.quantity}
-          </p>
-          <p className="font-bold text-gray-900 mt-1">
-            ₹{order.amount}
-          </p>
+          <p className="text-gray-600 text-sm">Qty: {order.quantity}</p>
+          <p className="font-bold text-gray-900 mt-1">₹{order.amount}</p>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useLocation, Routes, Route } from "react-router-dom";
 import { FooterSection } from "./components/Footer";
 import Header from "./HomePage/Header";
 
@@ -16,13 +16,20 @@ import { useAppContext } from "./context/AppContext";
 import AuthCards from "./components/AuthCards";
 import Wishlist from "./tabs/Wishlist";
 import CheckoutPage from "./tabs/CheckoutPage";
+import { useEffect } from "react";
 
 function App() {
   const { authCardPopUp, setAuthCardPopUp } = useAppContext();
 
+  const location = useLocation();
+
+  useEffect(() => {
+    // Close auth modal on every route change
+    setAuthCardPopUp(false);
+  }, [location.pathname]);
+
   return (
-    <BrowserRouter>
-      {/* This wrapper ensures footer sticks to bottom */}
+
       <div className="min-h-screen flex flex-col">
         <Header />
 
@@ -43,7 +50,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/my-orders" element={<MyOrderPage />} />
             <Route path="/about" element={<AboutUs />} />
-            <Route path="/terms-policy/:type"  element={<TermsAndPolicy />} />
+            <Route path="/terms-policy/:type" element={<TermsAndPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/wishlist" element={<Wishlist />} />
@@ -53,8 +60,7 @@ function App() {
         {/* Footer stays at the bottom */}
         <FooterSection />
       </div>
-
-    </BrowserRouter>
+  
   );
 }
 

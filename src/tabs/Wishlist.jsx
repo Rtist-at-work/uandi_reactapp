@@ -3,6 +3,8 @@ import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import ProductGridSkeleton from "../components/ProductGridSkeletn";
 import Breadcrumb from "../components/BreadCrumb";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const Wishlist = () => {
   const { getJsonApi, postJsonApi } = useApi();
@@ -36,7 +38,7 @@ const Wishlist = () => {
         const response = await postJsonApi(
           "api/postWishlist",
           { productId },
-          "application/json"
+          "application/json",
         );
 
         if (response?.status === 200 || response?.status === 201) {
@@ -46,18 +48,15 @@ const Wishlist = () => {
         console.error("Remove wishlist error:", err);
       }
     },
-    [postJsonApi]
+    [postJsonApi],
   );
 
   // ⭐ Material UI Skeleton Loader
-  if (loading)
-    return (
-      <ProductGridSkeleton/>
-    );
+  if (loading) return <ProductGridSkeleton />;
 
   return (
     <div className="p-4">
-      <Breadcrumb/>
+      <Breadcrumb />
       <h2 className="text-xl font-semibold mb-4">My Wishlist</h2>
 
       {wishlist.length === 0 ? (
@@ -69,7 +68,7 @@ const Wishlist = () => {
               key={product._id}
               className="border rounded-lg shadow-sm p-3 cursor-pointer hover:shadow-md transition"
             >
-              <img
+              <LazyLoadImage
                 src={`${import.meta.env.VITE_API_URL}/api/mediaDownload/${
                   product.productImages?.[0]
                 }`}
@@ -86,7 +85,9 @@ const Wishlist = () => {
 
               <p className="text-xs text-gray-500">{product.category}</p>
 
-              <p className="text-yellow-600 text-sm">⭐ {product.averageRating || 0}</p>
+              <p className="text-yellow-600 text-sm">
+                ⭐ {product.averageRating || 0}
+              </p>
 
               <button
                 onClick={(e) => {

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import { Skeleton } from "@mui/material";
 import { toast } from "sonner";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const ProductDetail = ({ product }) => {
   const url = import.meta.env.VITE_API_URL;
@@ -35,11 +37,10 @@ const ProductDetail = ({ product }) => {
       await postJsonApi(
         "api/addCart",
         { productId: product._id, size: selectedSize, quantity },
-        "application/json"
+        "application/json",
       );
     } catch (err) {
       console.log("Add to Cart Error:", err);
-      toast.error("Failed to add product to cart");
     } finally {
       setAddLoading(false);
     }
@@ -54,15 +55,14 @@ const ProductDetail = ({ product }) => {
 
     setBuyLoading(true);
     try {
-      await postJsonApi(
+      const response = await postJsonApi(
         "api/addCart",
         { productId: product._id, size: selectedSize, quantity },
-        "application/json"
+        "application/json",
       );
-      navigate("/cart");
+      if (response.status === 200) navigate("/cart");
     } catch (err) {
       console.log("Buy Now Error:", err);
-      toast.error("Failed to add product to cart");
     } finally {
       setBuyLoading(false);
     }
@@ -92,7 +92,7 @@ const ProductDetail = ({ product }) => {
           <Skeleton variant="rectangular" height={450} />
         ) : (
           <div className="w-full border border-gray-300 bg-gray-100 rounded-xl overflow-hidden shadow-sm">
-            <img
+            <LazyLoadImage
               src={`${url}/api/mediaDownload/${selectedImage}`}
               className="w-full h-[450px] object-contain"
             />
@@ -102,7 +102,12 @@ const ProductDetail = ({ product }) => {
         <div className="flex gap-4 mt-4 overflow-x-auto">
           {loading
             ? [1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} variant="rectangular" width={80} height={80} />
+                <Skeleton
+                  key={i}
+                  variant="rectangular"
+                  width={80}
+                  height={80}
+                />
               ))
             : images.map((img, index) => (
                 <div
@@ -114,7 +119,7 @@ const ProductDetail = ({ product }) => {
                   }`}
                   onClick={() => setSelectedImage(img)}
                 >
-                  <img
+                  <LazyLoadImage
                     src={`${url}/api/mediaDownload/${img}`}
                     className="w-20 h-20 object-contain"
                   />
@@ -138,7 +143,8 @@ const ProductDetail = ({ product }) => {
             <h1 className="text-3xl font-semibold">{product.name}</h1>
 
             <p className="text-gray-500 text-lg">
-              Category: <span className="font-semibold">{product.category}</span>
+              Category:{" "}
+              <span className="font-semibold">{product.category}</span>
             </p>
 
             <p className="text-gray-500 text-lg">
@@ -147,7 +153,9 @@ const ProductDetail = ({ product }) => {
 
             <div className="flex items-center gap-2">
               <span className="text-yellow-500 text-xl">★</span>
-              <span className="font-semibold">{product.averageRating || 0}</span>
+              <span className="font-semibold">
+                {product.averageRating || 0}
+              </span>
               <span className="text-gray-500">
                 ({product.reviews?.length || 0} reviews)
               </span>
@@ -158,7 +166,9 @@ const ProductDetail = ({ product }) => {
               <p className="text-3xl font-bold text-green-700">₹{finalPrice}</p>
               {product.offer > 0 && (
                 <>
-                  <p className="text-gray-500 line-through text-lg">₹{product.price}</p>
+                  <p className="text-gray-500 line-through text-lg">
+                    ₹{product.price}
+                  </p>
                   <span className="text-red-600 font-semibold text-lg">
                     {product.offertype === "percentage"
                       ? `${product.offer}% off`
@@ -243,7 +253,9 @@ const ProductDetail = ({ product }) => {
 
             <div className="mt-6">
               <h2 className="text-2xl font-semibold mb-2">Description</h2>
-              <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              <p className="text-gray-700 leading-relaxed">
+                {product.description}
+              </p>
             </div>
           </>
         )}

@@ -1,3 +1,6 @@
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+
 export const CustomerTestimonials = () => {
   const testimonials = [
     {
@@ -40,7 +43,7 @@ export const CustomerTestimonials = () => {
           >
             {/* Floating Image */}
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-999">
-              <img
+              <LazyLoadImage
                 src={t.image}
                 alt={t.name}
                 className="w-16 h-16 rounded-full object-cover shadow-lg border-4 border-white"

@@ -8,44 +8,47 @@ import { toast } from "sonner";
 export default function AuthPopup({ isOpen, onClose }) {
   const [step, setStep] = useState("login");
   const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const { setAuthCardPopUp } = useAppContext();
-  
+  const [loading, setLoading] = useState(false); // ✅ added
 
+  const { setAuthCardPopUp } = useAppContext();
   const { postJsonApi } = useApi();
 
   const auth = async () => {
     const api = step === "login" ? "api/send-otp" : "api/verify-otp";
-    const data = step === "login" ? { mobile } : { otp, mobile };
+    const data = step === "login" ? { email } : { otp, email };
 
     try {
+      setLoading(true); // ✅ start loading
+
       const response = await postJsonApi(api, { data }, "application/json");
 
       if (response?.status === 200) {
         if (step === "login") {
           setStep("otp");
         } else {
-          // ✅ Successful login: store user info in localStorage
           const user = response.data?.user || {};
           localStorage.setItem("username", user.name || "User");
-          localStorage.setItem("mobile", mobile);
+          localStorage.setItem("email", email);
 
           setAuthCardPopUp(false);
           setMobile("");
+          setEmail("");
           setOtp("");
-          toast.success("Login successful!");
         }
       }
     } catch (err) {
       console.log(err);
-      toast.error("Something went wrong. Try again.");
+    } finally {
+      setLoading(false); // ✅ stop loading
     }
   };
 
   const handleSendOtp = () => {
     if (step === "login") {
-      if (!mobile || mobile.length !== 10) {
-        toast.error("Please enter a valid 10-digit mobile number");
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        toast.error("Please enter a valid email address");
         return;
       }
     } else if (step === "otp") {
@@ -72,7 +75,6 @@ export default function AuthPopup({ isOpen, onClose }) {
         className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition"
@@ -80,7 +82,6 @@ export default function AuthPopup({ isOpen, onClose }) {
           <X size={22} className="text-gray-600" />
         </button>
 
-        {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <div className="w-16 h-16 bg-blue-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-md">
             <ShieldCheck size={38} />
@@ -89,32 +90,41 @@ export default function AuthPopup({ isOpen, onClose }) {
             {step === "signup" ? "Create an Account" : "Welcome Back"}
           </h2>
           <p className="text-gray-500 text-sm">
-            {step === "signup" ? "Sign up with your mobile number" : "Login using OTP"}
+            {step === "signup"
+              ? "Sign up with your mobile number"
+              : "Login using OTP"}
           </p>
         </div>
 
-        {/* Phone Input */}
         {step !== "otp" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <label className="block font-medium text-gray-700 mb-2">Mobile Number</label>
+            <label className="block font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+
             <div className="flex items-center border rounded-xl p-3 gap-2 bg-gray-50">
-              <span className="text-gray-700 font-medium">+91</span>
+              <span className="text-gray-500">@</span>
               <div className="w-px h-6 bg-gray-300" />
-              <Phone className="text-gray-500" />
+
               <input
-                type="number"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value.slice(0, 10))}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-transparent outline-none"
-                placeholder="Enter 10-digit mobile number"
+                placeholder="Enter your email address"
               />
             </div>
 
             <button
               onClick={handleSendOtp}
-              className="w-full mt-6 bg-blue-700 text-white py-3 rounded-xl font-semibold hover:bg-blue-800 transition"
+              disabled={loading} // ✅ disable
+              className={`w-full mt-6 py-3 rounded-xl font-semibold transition ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-700 hover:bg-blue-800 text-white"
+              }`}
             >
-              Send OTP
+              {loading ? "Sending..." : "Send OTP"} {/* ✅ text change */}
             </button>
 
             <div className="text-center mt-5 text-sm text-gray-600">
@@ -143,10 +153,11 @@ export default function AuthPopup({ isOpen, onClose }) {
           </motion.div>
         )}
 
-        {/* OTP Page */}
         {step === "otp" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <label className="block font-medium text-gray-700 mb-2">Enter OTP</label>
+            <label className="block font-medium text-gray-700 mb-2">
+              Enter OTP
+            </label>
             <input
               type="number"
               value={otp}
@@ -157,16 +168,21 @@ export default function AuthPopup({ isOpen, onClose }) {
 
             <button
               onClick={handleSendOtp}
-              className="w-full mt-6 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition"
+              disabled={loading} // ✅ disable
+              className={`w-full mt-6 py-3 rounded-xl font-semibold transition ${
+                loading
+                  ? "bg-green-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700 text-white"
+              }`}
             >
-              Verify OTP
+              {loading ? "Verifying..." : "Verify OTP"} {/* ✅ text change */}
             </button>
 
             <button
               onClick={() => setStep("login")}
               className="w-full mt-3 text-blue-700 font-medium hover:underline"
             >
-              Change Number
+              Change Email
             </button>
           </motion.div>
         )}

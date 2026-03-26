@@ -1,9 +1,11 @@
 // MainBanner.jsx
 import Skeleton from "@mui/material/Skeleton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function MainBanner({ banners, bannerClick, loading }) {
   const url = import.meta.env.VITE_API_URL;
-  
+
   // Filter only MAIN type
   const mainBanner = banners?.find((b) => b.bannerType === "main");
 
@@ -23,7 +25,7 @@ export default function MainBanner({ banners, bannerClick, loading }) {
   return (
     <div className="w-full">
       <div className="relative w-full h-60 sm:h-72 md:h-96 overflow-hidden shadow-lg">
-        <img
+        <LazyLoadImage
           src={`${url}/api/mediaDownload/${mainBanner.bannerImg}`}
           alt={mainBanner.heading}
           className="w-full h-full object-cover"
@@ -36,7 +38,10 @@ export default function MainBanner({ banners, bannerClick, loading }) {
           </h1>
           <p className="text-sm md:text-lg mb-4">{mainBanner.subHeading}</p>
 
-          <button onClick={()=>bannerClick(mainBanner?.products)} className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition">
+          <button
+            onClick={() => bannerClick(mainBanner?.products)}
+            className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition"
+          >
             Shop Now
           </button>
         </div>

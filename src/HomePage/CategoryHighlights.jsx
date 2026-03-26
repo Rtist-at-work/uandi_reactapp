@@ -1,5 +1,6 @@
 // CategoryHighlights.jsx
-import React from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import Skeleton from "@mui/material/Skeleton";
 import { useNavigate } from "react-router-dom";
 
@@ -41,7 +42,7 @@ const CategoryHighlights = ({ categories, loading }) => {
                   className="flex-shrink-0 w-36 text-center cursor-pointer"
                 >
                   <div className="w-36 h-36 rounded-full overflow-hidden shadow-md">
-                    <img
+                    <LazyLoadImage
                       src={`${url}/api/mediaDownload/${cat.posters[0]}`}
                       alt={cat.category}
                       className="w-full h-full object-cover"
@@ -76,7 +77,7 @@ const CategoryHighlights = ({ categories, loading }) => {
                 className="flex flex-col items-center text-center cursor-pointer group"
               >
                 <div className="w-40 h-40 xl:w-52 xl:h-52 rounded-full overflow-hidden shadow-md transition-transform duration-300 group-hover:scale-105">
-                  <img
+                  <LazyLoadImage
                     src={`${url}/api/mediaDownload/${cat.posters[0]}`}
                     alt={cat.category}
                     className="w-full h-full object-cover"

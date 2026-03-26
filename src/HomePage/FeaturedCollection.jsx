@@ -1,4 +1,6 @@
 import Skeleton from "@mui/material/Skeleton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function FeaturedCollections({ banners, bannerClick, loading }) {
   const apiBase = import.meta.env.VITE_API_URL;
@@ -29,7 +31,7 @@ export default function FeaturedCollections({ banners, bannerClick, loading }) {
                   onClick={() => bannerClick(item.products)}
                   className="relative w-full h-40 sm:h-48 md:h-56 rounded-xl overflow-hidden shadow-md cursor-pointer group"
                 >
-                  <img
+                  <LazyLoadImage
                     src={imgSrc}
                     alt={item.heading}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
