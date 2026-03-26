@@ -16,18 +16,18 @@ export default function AuthPopup({ isOpen, onClose }) {
   const { postJsonApi } = useApi();
 
   const auth = async () => {
-    const api = step === "login" ? "api/send-otp" : "api/verify-otp";
-    const data = step === "login" ? { email } : { otp, email };
+    // const api = step === "login" ? "api/send-otp" : "api/verify-otp";
+    // const data = step === "login" ? { email } : { otp, email };
 
     try {
       setLoading(true); // ✅ start loading
 
-      const response = await postJsonApi(api, { data }, "application/json");
+      const response = await postJsonApi('api/send-otp', { email }, "application/json");
 
       if (response?.status === 200) {
-        if (step === "login") {
-          setStep("otp");
-        } else {
+        // if (step === "login") {
+        //   setStep("otp");
+        // } else {
           const user = response.data?.user || {};
           localStorage.setItem("username", user.name || "User");
           localStorage.setItem("email", email);
@@ -36,7 +36,7 @@ export default function AuthPopup({ isOpen, onClose }) {
           setMobile("");
           setEmail("");
           setOtp("");
-        }
+        // }
       }
     } catch (err) {
       console.log(err);
@@ -46,17 +46,17 @@ export default function AuthPopup({ isOpen, onClose }) {
   };
 
   const handleSendOtp = () => {
-    if (step === "login") {
+    // if (step === "login") {
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         toast.error("Please enter a valid email address");
         return;
       }
-    } else if (step === "otp") {
-      if (!otp || otp.length !== 6) {
-        toast.error("Please enter the 6-digit OTP");
-        return;
-      }
-    }
+    // } else if (step === "otp") {
+    //   if (!otp || otp.length !== 6) {
+    //     toast.error("Please enter the 6-digit OTP");
+    //     return;
+    //   }
+    // }
     auth();
   };
 
@@ -89,11 +89,11 @@ export default function AuthPopup({ isOpen, onClose }) {
           <h2 className="text-2xl font-semibold mt-3">
             {step === "signup" ? "Create an Account" : "Welcome Back"}
           </h2>
-          <p className="text-gray-500 text-sm">
+          {/* <p className="text-gray-500 text-sm">
             {step === "signup"
               ? "Sign up with your mobile number"
               : "Login using OTP"}
-          </p>
+          </p> */}
         </div>
 
         {step !== "otp" && (
@@ -124,10 +124,10 @@ export default function AuthPopup({ isOpen, onClose }) {
                   : "bg-blue-700 hover:bg-blue-800 text-white"
               }`}
             >
-              {loading ? "Sending..." : "Send OTP"} {/* ✅ text change */}
+              {loading ? "Logging In..." : "Login"} {/* ✅ text change */}
             </button>
 
-            <div className="text-center mt-5 text-sm text-gray-600">
+            {/* <div className="text-center mt-5 text-sm text-gray-600">
               {step === "login" ? (
                 <p>
                   New user?
@@ -149,7 +149,7 @@ export default function AuthPopup({ isOpen, onClose }) {
                   </button>
                 </p>
               )}
-            </div>
+            </div> */}
           </motion.div>
         )}
 
