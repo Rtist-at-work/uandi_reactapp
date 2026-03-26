@@ -52,6 +52,7 @@ const ProductListPage = () => {
         }&productIds=${productIds}`,
         "application/json"
       );
+      console.log('respon :', response)
       if (response.status === 200 || response.status === 201) {
         const prods = response.data.products || [];
 
@@ -63,7 +64,7 @@ const ProductListPage = () => {
           highestPrice: response.data.highestPrice || 3000,
         });
 
-        setPriceRange([100, response.data.highestPrice || 3000]);
+        setPriceRange([1, response.data.highestPrice || 3000]);
       }
     } catch (err) {
       console.error("Error fetching products:", err);
