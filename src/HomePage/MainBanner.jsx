@@ -1,50 +1,78 @@
-// MainBanner.jsx
+import { useEffect, useState } from "react";
 import Skeleton from "@mui/material/Skeleton";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
-export default function MainBanner({ banners, bannerClick, loading }) {
+export default function MainBanner({ banners, loading }) {
   const url = import.meta.env.VITE_API_URL;
 
-  // Filter only MAIN type
-  const mainBanner = banners?.find((b) => b.bannerType === "main");
+  const mainBanners = banners?.filter((b) => b.bannerType === "main") || [];
 
-  // Show skeleton while loading
+  const slides = mainBanners.length
+    ? [...mainBanners, mainBanners[0]]
+    : [];
+
+  const [current, setCurrent] = useState(0);
+  const [transition, setTransition] = useState(true);
+
+  useEffect(() => {
+    if (mainBanners.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrent((prev) => prev + 1);
+      setTransition(true);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [mainBanners.length]);
+
+  useEffect(() => {
+    if (current === slides.length - 1) {
+      setTimeout(() => {
+        setTransition(false);
+        setCurrent(0);
+      }, 700);
+    }
+  }, [current, slides.length]);
+
   if (loading) {
     return (
-      <div className="w-full">
-        <div className="relative w-full h-60 sm:h-72 md:h-96 overflow-hidden shadow-lg">
-          <Skeleton variant="rectangular" width="100%" height="100%" />
-        </div>
+      <div className="w-full aspect-[16/9]">
+        <Skeleton variant="rectangular" width="100%" height="100%" />
       </div>
     );
   }
 
-  if (!mainBanner) return null; // No main banner
+  if (!mainBanners.length) return null;
 
   return (
-    <div className="w-full">
-      <div className="relative w-full h-60 sm:h-72 md:h-96 overflow-hidden shadow-lg">
-        <LazyLoadImage
-          src={`${url}/api/mediaDownload/${mainBanner.bannerImg}`}
-          alt={mainBanner.heading}
-          className="w-full h-full object-cover"
-        />
+    <div className="w-full overflow-hidden">
+      
+      {/* 16:9 Container */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden">
 
-        {/* Banner Content */}
-        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white text-center px-4">
-          <h1 className="text-3xl md:text-5xl font-bold mb-2">
-            {mainBanner.heading}
-          </h1>
-          <p className="text-sm md:text-lg mb-4">{mainBanner.subHeading}</p>
+        {/* Slider */}
+        <div
+          className={`flex h-full ${
+            transition ? "transition-transform duration-700 ease-in-out" : ""
+          }`}
+          style={{
+            transform: `translateX(-${current * 100}%)`,
+          }}
+        >
+          {slides.map((banner, index) => (
+            <div key={index} className="w-full flex-shrink-0">
 
-          <button
-            onClick={() => bannerClick(mainBanner?.products)}
-            className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition"
-          >
-            Shop Now
-          </button>
+              <LazyLoadImage
+                src={`${url}/api/mediaDownload/${banner.bannerImg}`}
+                alt="banner"
+                className="w-full h-full object-cover object-right"
+              />
+
+            </div>
+          ))}
         </div>
+
       </div>
     </div>
   );

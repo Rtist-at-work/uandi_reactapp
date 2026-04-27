@@ -2,6 +2,7 @@ import Skeleton from "@mui/material/Skeleton";
 import ProductCard from "../components/ProductCard";
 
 export const BestSellerSection = ({ bestSellers, loading }) => {
+  console.log('bs :', bestSellers)
   return (
     <div className="w-full mt-12 px-6">
       <h2 className="text-xl font-bold mb-6">Best Sellers</h2>

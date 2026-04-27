@@ -1,14 +1,19 @@
 // HomePage.jsx
-import Categories from "../HomePage/Categories";
-import MainBanner from "../HomePage/MainBanner";
-import FeaturedCollections from "../HomePage/FeaturedCollection";
-import OffersSection from "../HomePage/OfferSection";
-import CategoryHighlights from "../HomePage/CategoryHighlights";
-import { StoreHighlights } from "../HomePage/StoreHighlights";
-import { BestSellerSection } from "../HomePage/BestSeller";
 import useApi from "../hooks/useApi";
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { lazy, Suspense } from "react";
+
+import Categories from "../HomePage/Categories";
+import MainBanner from "../HomePage/MainBanner";
+const FeaturedCollections = lazy(
+  () => import("../HomePage/FeaturedCollection"),
+);
+const OffersSection = lazy(() => import("../HomePage/OfferSection"));
+const CategoryHighlights = lazy(() => import("../HomePage/CategoryHighlights"));
+const StoreHighlights = lazy(() => import("../HomePage/StoreHighlights"));
+const BestSellerSection = lazy(() => import("../HomePage/BestSeller"));
 
 const HomePage = () => {
   const { getJsonApi } = useApi();
@@ -31,7 +36,7 @@ const HomePage = () => {
     try {
       const response = await getJsonApi(
         "api/getCategories",
-        "application/json"
+        "application/json",
       );
       if (response.status === 200 || response.status === 201) {
         setCategories(response.data.categories || []);
@@ -39,7 +44,7 @@ const HomePage = () => {
       }
       return response;
     } catch (err) {
-      console.error("Error fetching categories:", err);
+      // console.error("Error fetching categories:", err);
       return null;
     }
   }, [getJsonApi]);
@@ -51,7 +56,7 @@ const HomePage = () => {
       setBanners(response?.data.banners || []);
       return response;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return null;
     }
   }, [getJsonApi]);
@@ -72,34 +77,36 @@ const HomePage = () => {
         state: { productIds },
       });
     },
-    [navigate]
+    [navigate],
   );
-
+  console.log("bs :", bestSellers);
   return (
     <div>
       {width >= 1024 && <Categories categories={categories} />}
+      <div id="main-banner">
+        <MainBanner
+          banners={banners}
+          bannerClick={bannerClick}
+          loading={loading}
+        />
+      </div>
 
-      <MainBanner
-        banners={banners}
-        bannerClick={bannerClick}
-        loading={loading}
-      />
+      <Suspense fallback={<div>...Loading</div>}>
+        <CategoryHighlights categories={categories} loading={loading} />
+        <OffersSection
+          banners={banners}
+          bannerClick={bannerClick}
+          loading={loading}
+        />
+        {/* <StoreHighlights />  */}
 
-      <CategoryHighlights categories={categories} loading={loading} />
-
-      <OffersSection
-        banners={banners}
-        bannerClick={bannerClick}
-        loading={loading}
-      />
-      <StoreHighlights />
-
-      <FeaturedCollections
-        banners={banners}
-        bannerClick={bannerClick}
-        loading={loading}
-      />
-      <BestSellerSection bestSellers={bestSellers} loading={loading} />
+        <FeaturedCollections
+          banners={banners}
+          bannerClick={bannerClick}
+          loading={loading}
+        />
+        {/* {bestSellers.length > 0 && <BestSellerSection bestSellers={bestSellers} loading={loading} />} */}
+      </Suspense>
     </div>
   );
 };
