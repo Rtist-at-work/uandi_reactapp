@@ -1,7 +1,7 @@
 import Skeleton from "@mui/material/Skeleton";
 import ProductCard from "../components/ProductCard";
 
-export const BestSellerSection = ({ bestSellers, loading }) => {
+const BestSellerSection = ({ bestSellers, loading }) => {
   console.log('bs :', bestSellers)
   return (
     <div className="w-full mt-12 px-6">
@@ -23,3 +23,5 @@ export const BestSellerSection = ({ bestSellers, loading }) => {
     </div>
   );
 };
+
+export default BestSellerSection

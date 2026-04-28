@@ -98,14 +98,14 @@ const HomePage = () => {
           bannerClick={bannerClick}
           loading={loading}
         />
-        {/* <StoreHighlights />  */}
+        <StoreHighlights /> 
 
         <FeaturedCollections
           banners={banners}
           bannerClick={bannerClick}
           loading={loading}
         />
-        {/* {bestSellers.length > 0 && <BestSellerSection bestSellers={bestSellers} loading={loading} />} */}
+        {bestSellers.length > 0 && <BestSellerSection bestSellers={bestSellers} loading={loading} />}
       </Suspense>
     </div>
   );

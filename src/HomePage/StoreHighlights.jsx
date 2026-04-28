@@ -1,6 +1,6 @@
 import { Truck, ShieldCheck, Headphones, Sparkles } from "lucide-react";
 
-export const StoreHighlights = () => {
+const StoreHighlights = () => {
   const features = [
     {
       icon: <Truck className="w-8 h-8" />,
@@ -45,3 +45,5 @@ export const StoreHighlights = () => {
     </div>
   );
 };
+
+export default StoreHighlights
