@@ -1,39 +1,32 @@
 import { useEffect, useState } from "react";
 import Skeleton from "@mui/material/Skeleton";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function MainBanner({ banners, loading }) {
   const url = import.meta.env.VITE_API_URL;
 
-  const mainBanners = banners?.filter((b) => b.bannerType === "main") || [];
-
-  const slides = mainBanners.length
-    ? [...mainBanners, mainBanners[0]]
-    : [];
+  const mainBanners =
+    banners?.filter((b) => b.bannerType === "main") || [];
 
   const [current, setCurrent] = useState(0);
   const [transition, setTransition] = useState(true);
 
+  // Delay slider start → avoids affecting LCP
   useEffect(() => {
     if (mainBanners.length <= 1) return;
 
-    const interval = setInterval(() => {
-      setCurrent((prev) => prev + 1);
-      setTransition(true);
-    }, 4000);
+    const startDelay = setTimeout(() => {
+      const interval = setInterval(() => {
+        setCurrent((prev) =>
+          prev === mainBanners.length - 1 ? 0 : prev + 1
+        );
+        setTransition(true);
+      }, 4000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }, 2000); // delay start
+
+    return () => clearTimeout(startDelay);
   }, [mainBanners.length]);
-
-  useEffect(() => {
-    if (current === slides.length - 1) {
-      setTimeout(() => {
-        setTransition(false);
-        setCurrent(0);
-      }, 700);
-    }
-  }, [current, slides.length]);
 
   if (loading) {
     return (
@@ -47,10 +40,8 @@ export default function MainBanner({ banners, loading }) {
 
   return (
     <div className="w-full overflow-hidden">
-      
       {/* 16:9 Container */}
       <div className="relative w-full aspect-[16/9] overflow-hidden">
-
         {/* Slider */}
         <div
           className={`flex h-full ${
@@ -60,19 +51,21 @@ export default function MainBanner({ banners, loading }) {
             transform: `translateX(-${current * 100}%)`,
           }}
         >
-          {slides.map((banner, index) => (
+          {mainBanners.map((banner, index) => (
             <div key={index} className="w-full flex-shrink-0">
-
-              <LazyLoadImage
+              <img
                 src={`${url}/api/mediaDownload/${banner.bannerImg}`}
                 alt="banner"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchpriority={index === 0 ? "high" : "auto"}
+                decoding="async"
+                width="1920"
+                height="1080"
                 className="w-full h-full object-cover object-right"
               />
-
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );

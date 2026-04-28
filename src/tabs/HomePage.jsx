@@ -62,13 +62,16 @@ const HomePage = () => {
   }, [getJsonApi]);
 
   useEffect(() => {
-    // wrapper so we can async/await
-    const fetchAll = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      await Promise.all([getCategory(), getBanners()]);
+
+      await getBanners();
+      getCategory();
+
       setLoading(false);
     };
-    fetchAll();
+
+    fetchData();
   }, []);
 
   const bannerClick = useCallback(
@@ -82,7 +85,9 @@ const HomePage = () => {
   console.log("bs :", bestSellers);
   return (
     <div>
-      {width >= 1024 && <Categories categories={categories} />}
+      <div className="hidden lg:block">
+        <Categories categories={categories} />
+      </div>
       <div id="main-banner">
         <MainBanner
           banners={banners}
@@ -98,14 +103,16 @@ const HomePage = () => {
           bannerClick={bannerClick}
           loading={loading}
         />
-        <StoreHighlights /> 
+        <StoreHighlights />
 
         <FeaturedCollections
           banners={banners}
           bannerClick={bannerClick}
           loading={loading}
         />
-        {bestSellers.length > 0 && <BestSellerSection bestSellers={bestSellers} loading={loading} />}
+        {bestSellers.length > 0 && (
+          <BestSellerSection bestSellers={bestSellers} loading={loading} />
+        )}
       </Suspense>
     </div>
   );
